@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors"); // ← import cors
+const cors = require("cors");
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
@@ -9,18 +9,22 @@ const wishlistRoutes = require("./routes/wishlistRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 
 connectDB();
+
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // your React dev server
-    credentials: true, // if you ever use cookies
+    origin: "http://localhost:5173", // change this for production if needed
+    credentials: true,
   })
 );
-// If you want to allow all origins during dev, you can just do:
-// app.use(cors());
 
 app.use(express.json());
+
+// ✅ Root route for status check
+app.get("/", (req, res) => {
+  res.send("🚀 API is running...");
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -34,5 +38,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server Error" });
 });
 
+// Port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
